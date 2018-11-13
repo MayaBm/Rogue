@@ -1,4 +1,4 @@
-import curses, fenetre, numpy
+import curses, fenetre, numpy, random
 from personnage import Personnage
 from monstre import Monstre
 from tresor import Tresor
@@ -13,6 +13,13 @@ height = 5; width = 40
 case = numpy.zeros( (5,40) )
 case[3,3]= 1
 win = curses.newwin(30, 30, 30, 30)
+
+level = 1
+MAX_level = 2
+
+couloir = numpy.zeros( (6,3))
+
+niveau2 = numpy.zeros( (30,6) )
 
 
 MAX_X = 5
@@ -29,14 +36,13 @@ case[i,j]=2          #affichage monstre
 i,j= tres.get_position() 
 case[i,j]=3
 
-
 while (end):
     curses.noecho()
     # stdscr.clear()
     for i in range (5):
         for j in range (40):
             if case[i,j] == 0:
-                stdscr.addstr(i,j, ".")
+                stdscr.addstr(i,j, ".\n")
             elif case[i,j] == 1:
                 stdscr.addstr(i,j, "X\n")
             elif case[i,j] == 2:
@@ -75,6 +81,41 @@ while (end):
     if perso.get_position() == tres.get_position() :
         tres.output = False
         case[i,j] = 1
+        print("tresor trouve")
     if (monstre.get_pv() < 1 and tres.output == False) :
-        break
+        break                                             ###On affiche le couloir
         curses.endwin()
+    if monstre.get_pv() > 0 : #tant que le monstre est en vie
+        if abs(monstre.py - perso.py) < 2 and abs(monstre.px - perso.px) < 2 :
+            perso.pv -= 1
+        else : 
+            deplm = random.randint(0,4)
+            if deplm == 0 and monstre < MAX_Y - 1 :
+                i,j=monstre.get_position()
+                case[i,j]=0
+                monstre.py += 1
+                i,j=monstre.get_position()
+                case[i,j]=2
+            elif deplm == 1 and monstre.py > 0:
+                i,j=monstre.get_position()
+                case[i,j]=0
+                monstre.py -= 1
+                i,j=monstre.get_position()
+                case[i,j]=2
+            elif deplm == 2 and monstre.px < MAX_X - 1:
+                i,j=monstre.get_position()
+                case[i,j]=0
+                monstre.px += 1
+                i,j=monstre.get_position()
+                case[i,j]=2
+            elif deplm == 3 and monstre.px > 0 :
+                i,j=monstre.get_position()
+                case[i,j]=0
+                monstre.px -= 1
+                i,j=monstre.get_position()
+                case[i,j]=2
+    print("MES PV :" + str(perso.get_pv()))
+    if perso.get_pv() < 1 :
+        print("Le perso est mort")
+        break
+        
