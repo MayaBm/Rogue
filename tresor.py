@@ -1,15 +1,19 @@
+import random
 class Tresor:
     def __init__(self):
         self.output = True
-        self.px = 5
-        self.py = 5
+        self.px = int(10*random.random())
+        self.py = int(10*random.random())
 
 
+    def get_position(self):
+        return(self.px, self.py)
 
-def display_icon(self):
+
+    #def on(self):
     # display icon
 
-def remove_icon(self):
+    #def off(self):
     # remove icon ft
 
 
