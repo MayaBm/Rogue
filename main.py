@@ -4,6 +4,7 @@ from monstre import Monstre
 from tresor import Tresor
 
 i = 1
+end = True
 stdscr = curses.initscr()
 stdscr.keypad(True)
 stdscr = curses.initscr()
@@ -13,6 +14,7 @@ case = numpy.zeros( (5,40) )
 case[3,3]= 1
 win = curses.newwin(30, 30, 30, 30)
 
+
 MAX_X = 5
 MAX_Y = 40
 perso = Personnage()
@@ -20,15 +22,27 @@ monstre = Monstre()
 tres = Tresor()
 #potentiellememt : creer une liste de tresor
 
-while (True):
+
+i,j= monstre.get_position() 
+case[i,j]=2          #affichage monstre
+
+i,j= tres.get_position() 
+case[i,j]=3
+
+
+while (end):
     curses.noecho()
     # stdscr.clear()
     for i in range (5):
         for j in range (40):
             if case[i,j] == 0:
-                stdscr.addstr(i,j, "0")
+                stdscr.addstr(i,j, ".")
             elif case[i,j] == 1:
                 stdscr.addstr(i,j, "X\n")
+            elif case[i,j] == 2:
+                stdscr.addstr(i,j, "M\n")
+            elif case[i,j] == 3:
+                stdscr.addstr(i,j, "T\n")
     win.border(0)
     stdscr.refresh()
     depl = stdscr.getch()
@@ -57,11 +71,10 @@ while (True):
         i,j=perso.get_position()
         case[i,j]=1
     if perso.get_position() == monstre.get_position() :
-        monstre.pv -=1
-        print("monstre mort")
-        print(tres.get_position())
+        monstre.pv -= 1
     if perso.get_position() == tres.get_position() :
         tres.output = False
-        print("tresor trouve")
-    if not tres.output and monstre.get_pv == 0 :
-        break    
+        case[i,j] = 1
+    if (monstre.get_pv() < 1 and tres.output == False) :
+        break
+        curses.endwin()
